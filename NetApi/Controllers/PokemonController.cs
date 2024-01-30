@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NetApi.Models;
+using NetApi.Services.PokemonService;
 
 namespace NetApi.Controllers
 {
@@ -12,46 +13,64 @@ namespace NetApi.Controllers
     [ApiController]
     public class PokemonController : ControllerBase
     {
-        private static List<Pokemon> pokemons = new List<Pokemon>
-        {
-           new Pokemon
-           {
-              Id = 1,
-              Name = "Charmander",
-              Type = "Fire"
-           },
-           new Pokemon
-           {
-              Id = 2,
-              Name = "Bulbasaur",
-              Type = "Grass"
-           }
-        };
+       private readonly string errorMessage = "That pokemon does not exist";
+       private readonly IPokemonService _pokemonService;
+       public PokemonController(IPokemonService pokemonService)
+       {
+            _pokemonService = pokemonService;
+       }
 
         [HttpGet]
         public async Task<ActionResult<List<Pokemon>>> GetAllPokemons()
         {
-            return Ok(pokemons);
+            var result = _pokemonService.GetAllPokemons();
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Pokemon>> GetPokemon(int id)
         {
-            var pokemon = pokemons.Find(X => X.Id == id);
+            var result = _pokemonService.GetPokemon(id);
 
-            if (pokemon == null)
+            if (result == null)
             {
-                return NotFound("Sorry, but this pokemon doesn't exist");
+                return NotFound(errorMessage);
             }
 
-            return Ok(pokemon);
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult<List<Pokemon>>> AddHero(Pokemon pokemon)
+        public async Task<ActionResult<List<Pokemon>>> AddPokemon(Pokemon pokemon)
         {
-            pokemons.Add(pokemon);
-            return Ok(pokemons);
+            var result = _pokemonService.AddPokemon(pokemon);
+            return result;
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<List<Pokemon>>> UpdatePokemon(int id, Pokemon request)
+        {
+            var result = _pokemonService.UpdatePokemon(id, request);
+
+            if (result == null)
+            {
+                return NotFound(errorMessage);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<List<Pokemon>>> DeletePokemon(int id)
+        {
+            var result = _pokemonService.DeletePokemon(id);
+
+            if (result == null)
+            {
+                return NotFound(errorMessage);
+            }
+
+            return result;
         }
     }
 }
