@@ -14,7 +14,7 @@ namespace NetApi.data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer("Server=localhost;Database=pokemonsApi;User=sa;Password=<YourStrong@Passw0rd>;Trusted_Connection=False;Encrypt=false");
+            optionsBuilder.UseSqlServer("Server=localhost;Database=pokemonsApi;User=sa;Password=P@ssword1234;Trusted_Connection=False;Encrypt=false");
         }
 
         public DbSet<Pokemon> Pokemons { get; set; }
